@@ -12,6 +12,7 @@ class GameScene: SKScene {
     var possibleTargets = ["target", "badTarget"]
     var timer: Timer?
     var scoreLabel: SKLabelNode!
+    var gun: SKSpriteNode!
     var score = 0 {
         didSet {
             scoreLabel.text = "Score: \(score)"
@@ -33,6 +34,8 @@ class GameScene: SKScene {
         scoreLabel.horizontalAlignmentMode = .left
         scoreLabel.fontSize = 48
         addChild(scoreLabel)
+        
+        createGun()
         
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(createTarget), userInfo: nil, repeats: true)
     }
@@ -66,7 +69,8 @@ class GameScene: SKScene {
         case 3:
             sprite.position = CGPoint(x: -136, y: 200 * randomRowNumber)
             sprite.physicsBody?.velocity = CGVector(dx: 200, dy: 0)
-        default: break
+        default:
+            break
         }
         
         switch randomSize {
@@ -77,13 +81,15 @@ class GameScene: SKScene {
         }
         
         switch target {
-        case "target": break
+        case "target":
+            break
         case "badTarget":
             if var name = sprite.name {
                 name += "Bad"
                 sprite.name = name
             }
-        default: break
+        default:
+            break
         }
         
         addChild(sprite)
@@ -94,11 +100,28 @@ class GameScene: SKScene {
         sprite.physicsBody?.affectedByGravity = false
     }
     
+    func createGun() {
+        gun = SKSpriteNode(imageNamed: "gun")
+        gun.position = CGPoint(x: 900, y: 100)
+        gun.zPosition = 1
+        gun.physicsBody = SKPhysicsBody(texture: gun.texture!, size: gun.size)
+        gun.physicsBody?.affectedByGravity = false
+        gun.physicsBody?.collisionBitMask = 0
+        addChild(gun)
+    }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
         let tappedNodes = nodes(at: location)
         
+        gun.physicsBody?.applyTorque(2)
+        gun.physicsBody?.angularVelocity = -15
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.075) {
+            [weak self] in
+            self?.gun.removeFromParent()
+            self?.createGun()
+        }
         
         for node in tappedNodes {
             guard let isBadTarget = node.name?.contains("Bad") else { return }
