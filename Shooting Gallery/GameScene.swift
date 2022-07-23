@@ -20,6 +20,7 @@ class GameScene: SKScene {
             if self.secondsLeft == 0 {
                 gameTimer?.invalidate()
                 spawnTimer?.invalidate()
+                
                 let gameOver = SKSpriteNode(imageNamed: "gameOver")
                 gameOver.position = CGPoint(x: 512, y: 384)
                 gameOver.scale(to: CGSize(width: gameOver.size.width + 25, height: gameOver.size.height + 25))
@@ -35,6 +36,8 @@ class GameScene: SKScene {
     }
     
     override func didMove(to view: SKView) {
+        run(SKAction.playSoundFileNamed("game.mp3", waitForCompletion: false))
+        
         let background = SKSpriteNode(imageNamed: "background")
         background.name = "background"
         background.zPosition = -1
@@ -134,6 +137,8 @@ class GameScene: SKScene {
     }
     
     func fireBullet(through tappedNodes: [SKNode]) {
+        run(SKAction.playSoundFileNamed("gunshot.wav", waitForCompletion: false))
+        
         for target in tappedNodes {
             guard let isBadTarget = target.name?.contains("Bad") else { return }
             guard let isSmall = target.name?.contains("small") else { return }
@@ -148,6 +153,11 @@ class GameScene: SKScene {
                 target.addChild(hole)
                 
                 if isBadTarget {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                        [weak self] in
+                        self?.run(SKAction.playSoundFileNamed("badTarget.mp3", waitForCompletion: true))
+                    }
+                    
                     if isSmall {
                         score -= 100
                     } else if isMedium {
@@ -165,17 +175,16 @@ class GameScene: SKScene {
                     }
                 }
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    target.removeFromParent()
-                }
+                target.run(SKAction.fadeOut(withDuration: 1))
                 
                 break
-                
             }
         }
     }
     
     func reloadGun() {
+        run(SKAction.playSoundFileNamed("reload.mp3", waitForCompletion: false))
+        
         for multiplier in 1...6 {
             let bullet = SKSpriteNode(imageNamed: "bullet")
             bullet.position = CGPoint(x: 470 + (20 * CGFloat(multiplier)), y: scoreLabel.position.y + 25)

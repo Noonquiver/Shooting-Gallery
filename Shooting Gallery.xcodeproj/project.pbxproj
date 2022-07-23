@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D7AECED8288B9A1A00581932 /* game.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D7AECED5288B9A1A00581932 /* game.mp3 */; };
+		D7AECEDA288B9A1A00581932 /* gunshot.wav in Resources */ = {isa = PBXBuildFile; fileRef = D7AECED7288B9A1A00581932 /* gunshot.wav */; };
+		D7AECEDE288B9B4500581932 /* reload.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D7AECEDD288B9B4500581932 /* reload.mp3 */; };
+		D7AECEE0288B9DB400581932 /* badTarget.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D7AECEDF288B9DB400581932 /* badTarget.mp3 */; };
 		D7C2B54A2888C521000B7975 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C2B5492888C521000B7975 /* AppDelegate.swift */; };
 		D7C2B54C2888C521000B7975 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = D7C2B54B2888C521000B7975 /* GameScene.sks */; };
 		D7C2B5502888C521000B7975 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C2B54F2888C521000B7975 /* GameScene.swift */; };
@@ -17,6 +21,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D7AECED5288B9A1A00581932 /* game.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = game.mp3; sourceTree = "<group>"; };
+		D7AECED7288B9A1A00581932 /* gunshot.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = gunshot.wav; sourceTree = "<group>"; };
+		D7AECEDD288B9B4500581932 /* reload.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = reload.mp3; sourceTree = "<group>"; };
+		D7AECEDF288B9DB400581932 /* badTarget.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = badTarget.mp3; sourceTree = "<group>"; };
 		D7C2B5462888C521000B7975 /* Shooting Gallery.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Shooting Gallery.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7C2B5492888C521000B7975 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D7C2B54B2888C521000B7975 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -42,6 +50,10 @@
 			isa = PBXGroup;
 			children = (
 				D7C2B5482888C521000B7975 /* Shooting Gallery */,
+				D7AECED5288B9A1A00581932 /* game.mp3 */,
+				D7AECED7288B9A1A00581932 /* gunshot.wav */,
+				D7AECEDD288B9B4500581932 /* reload.mp3 */,
+				D7AECEDF288B9DB400581932 /* badTarget.mp3 */,
 				D7C2B5472888C521000B7975 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -127,8 +139,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				D7C2B5552888C521000B7975 /* Main.storyboard in Resources */,
+				D7AECEE0288B9DB400581932 /* badTarget.mp3 in Resources */,
+				D7AECED8288B9A1A00581932 /* game.mp3 in Resources */,
 				D7C2B54C2888C521000B7975 /* GameScene.sks in Resources */,
+				D7AECEDA288B9A1A00581932 /* gunshot.wav in Resources */,
 				D7C2B5572888C522000B7975 /* Assets.xcassets in Resources */,
+				D7AECEDE288B9B4500581932 /* reload.mp3 in Resources */,
 				D7C2B55A2888C522000B7975 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
