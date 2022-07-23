@@ -9,11 +9,24 @@ import SpriteKit
 
 class GameScene: SKScene {
     var possibleTargets = ["target", "badTarget"]
-    var timer: Timer?
+    var spawnTimer: Timer?
+    var gameTimer: Timer?
     var scoreLabel: SKLabelNode!
     var gun: SKSpriteNode!
     var bullets = [SKSpriteNode]()
     var reload: SKSpriteNode!
+    var secondsLeft = 60 {
+        didSet {
+            if self.secondsLeft == 0 {
+                gameTimer?.invalidate()
+                spawnTimer?.invalidate()
+                let gameOver = SKSpriteNode(imageNamed: "gameOver")
+                gameOver.position = CGPoint(x: 512, y: 384)
+                gameOver.scale(to: CGSize(width: gameOver.size.width + 25, height: gameOver.size.height + 25))
+                addChild(gameOver)
+            }
+        }
+    }
     
     var score = 0 {
         didSet {
@@ -47,7 +60,9 @@ class GameScene: SKScene {
         reload.isHidden = true
         addChild(reload)
         
-        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(createTarget), userInfo: nil, repeats: true)
+        spawnTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(createTarget), userInfo: nil, repeats: true)
+        gameTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(gameOver), userInfo: nil, repeats: true)
+        
     }
 
     override func update(_ currentTime: TimeInterval) {
@@ -167,6 +182,10 @@ class GameScene: SKScene {
             addChild(bullet)
             bullets.append(bullet)
         }
+    }
+    
+    @objc func gameOver() {
+        secondsLeft -= 1
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
