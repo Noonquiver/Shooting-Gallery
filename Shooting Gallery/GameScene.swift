@@ -6,13 +6,15 @@
 //
 
 import SpriteKit
-import GameplayKit
 
 class GameScene: SKScene {
     var possibleTargets = ["target", "badTarget"]
     var timer: Timer?
     var scoreLabel: SKLabelNode!
     var gun: SKSpriteNode!
+    var bullets = [SKSpriteNode]()
+    var reload: SKSpriteNode!
+    
     var score = 0 {
         didSet {
             scoreLabel.text = "Score: \(score)"
@@ -36,6 +38,14 @@ class GameScene: SKScene {
         addChild(scoreLabel)
         
         createGun()
+        reloadGun()
+        
+        guard let bulletPosition = bullets.first?.position else { return }
+        reload = SKSpriteNode(imageNamed: "reload")
+        reload.name = "reload"
+        reload.position = CGPoint(x: bulletPosition.x + 50, y: bulletPosition.y + 10)
+        reload.isHidden = true
+        addChild(reload)
         
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(createTarget), userInfo: nil, repeats: true)
     }
@@ -60,15 +70,13 @@ class GameScene: SKScene {
         switch randomRowNumber {
         case 1:
             sprite.position = CGPoint(x: -136, y: 200 * randomRowNumber)
-            sprite.physicsBody?.velocity = CGVector(dx: 200, dy: 0)
-            
+            sprite.physicsBody?.velocity = CGVector(dx: 600 / randomSize, dy: 0)
         case 2:
             sprite.position = CGPoint(x: 1200, y: 200 * randomRowNumber)
-            sprite.physicsBody?.velocity = CGVector(dx: -200, dy: 0)
-            
+            sprite.physicsBody?.velocity = CGVector(dx: -600 / randomSize, dy: 0)
         case 3:
             sprite.position = CGPoint(x: -136, y: 200 * randomRowNumber)
-            sprite.physicsBody?.velocity = CGVector(dx: 200, dy: 0)
+            sprite.physicsBody?.velocity = CGVector(dx: 600 / randomSize, dy: 0)
         default:
             break
         }
@@ -109,26 +117,14 @@ class GameScene: SKScene {
         gun.physicsBody?.collisionBitMask = 0
         addChild(gun)
     }
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch = touches.first else { return }
-        let location = touch.location(in: self)
-        let tappedNodes = nodes(at: location)
-        
-        gun.physicsBody?.applyTorque(2)
-        gun.physicsBody?.angularVelocity = -15
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.075) {
-            [weak self] in
-            self?.gun.removeFromParent()
-            self?.createGun()
-        }
-        
-        for node in tappedNodes {
-            guard let isBadTarget = node.name?.contains("Bad") else { return }
-            guard let isSmall = node.name?.contains("small") else { return }
-            guard let isMedium = node.name?.contains("medium") else { return }
+    
+    func fireBullet(at tappedNodes: [SKNode]) {
+        for target in tappedNodes {
+            guard let isBadTarget = target.name?.contains("Bad") else { return }
+            guard let isSmall = target.name?.contains("small") else { return }
+            guard let isMedium = target.name?.contains("medium") else { return }
             
-            if node.name != "background" {
+            if target.name != "background" {
                 if isBadTarget {
                     if isSmall {
                         score -= 100
@@ -147,8 +143,53 @@ class GameScene: SKScene {
                     }
                 }
                 
-                node.removeFromParent()
+                target.removeFromParent()
             }
+        }
+    }
+    
+    func reloadGun() {
+        for multiplier in 1...6 {
+            let bullet = SKSpriteNode(imageNamed: "bullet")
+            bullet.position = CGPoint(x: 470 + (20 * CGFloat(multiplier)), y: scoreLabel.position.y + 25)
+            addChild(bullet)
+            bullets.append(bullet)
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else { return }
+        let location = touch.location(in: self)
+        let tappedNodes = nodes(at: location)
+    
+        if !bullets.isEmpty {
+            let usedBullet = bullets.removeLast()
+            usedBullet.removeFromParent()
+            
+            gun.physicsBody?.applyTorque(2)
+            gun.physicsBody?.angularVelocity = -15
+            
+            fireBullet(at: tappedNodes)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.075) {
+                [weak self] in
+                self?.gun.removeFromParent()
+                self?.createGun()
+            }
+        } else {
+            for node in tappedNodes {
+                if node.name == "reload" {
+                    reload.isHidden = true
+                    reloadGun()
+                    break
+                }
+            }
+        }
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if bullets.isEmpty {
+            reload.isHidden = false
         }
     }
 }
