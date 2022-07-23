@@ -118,13 +118,20 @@ class GameScene: SKScene {
         addChild(gun)
     }
     
-    func fireBullet(at tappedNodes: [SKNode]) {
+    func fireBullet(through tappedNodes: [SKNode]) {
         for target in tappedNodes {
             guard let isBadTarget = target.name?.contains("Bad") else { return }
             guard let isSmall = target.name?.contains("small") else { return }
             guard let isMedium = target.name?.contains("medium") else { return }
             
             if target.name != "background" {
+                let hole = SKSpriteNode(imageNamed: "bulletHole")
+                hole.scale(to: target.frame.size)
+                hole.position.x += CGFloat.random(in: 10...50)
+                hole.position.y -= CGFloat.random(in: 10...50)
+                hole.zPosition = 1
+                target.addChild(hole)
+                
                 if isBadTarget {
                     if isSmall {
                         score -= 100
@@ -143,7 +150,12 @@ class GameScene: SKScene {
                     }
                 }
                 
-                target.removeFromParent()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    target.removeFromParent()
+                }
+                
+                break
+                
             }
         }
     }
@@ -169,8 +181,8 @@ class GameScene: SKScene {
             gun.physicsBody?.applyTorque(2)
             gun.physicsBody?.angularVelocity = -15
             
-            fireBullet(at: tappedNodes)
-            
+            fireBullet(through: tappedNodes)
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.075) {
                 [weak self] in
                 self?.gun.removeFromParent()
